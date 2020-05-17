@@ -5,7 +5,8 @@ using UnityEngine;
 public class EnemySpawnerScript : MonoBehaviour
 {
 //indico cosa deve generare
-public GameObject enemyPrefab;
+    public GameObject enemyPrefabL;
+    public GameObject enemyPrefabR;
     public float respawnTime = 5.0f;
     // Start is called before the first frame update
     void Start()
@@ -18,7 +19,8 @@ public GameObject enemyPrefab;
     private void SpawnEnemy()
     {
         //crea un nuovo GameObject basato su enemyPrefab
-        GameObject a = Instantiate(enemyPrefab) as GameObject;
+        GameObject l = Instantiate(enemyPrefabL) as GameObject;
+        GameObject r = Instantiate(enemyPrefabR) as GameObject;
     }
 
     IEnumerator EnemyWawe()
