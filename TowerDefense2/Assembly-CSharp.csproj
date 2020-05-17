@@ -38,6 +38,7 @@
   <ItemGroup>
      <Compile Include="Assets\Script\EnemySpawnerScript.cs" />
      <Compile Include="Assets\Script\Golem.cs" />
+     <Compile Include="Assets\Script\ScoreScript.cs" />
      <None Include="Assets\TowerDefense2\background\license.txt" />
      <None Include="Assets\TowerDefense2\enemy\TXT\readme.txt" />
      <None Include="Assets\TowerDefense2\stone_tower\TXT\readme.txt" />

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Golem : MonoBehaviour
 {
-    float moveSpeed = 2f;
+    float moveSpeed = 50f;
     Rigidbody2D rb;
     bool facingRight = false;
     public static bool isAttacking = false;
@@ -63,4 +63,5 @@ public class Golem : MonoBehaviour
         */
     }
     
+    V
 }

@@ -28,7 +28,7 @@ public GameObject enemyPrefab;
         {
             print(Time.time);
             //Al passare del tempo lo spawn diventa sempre più veloce
-             yield return new WaitForSeconds(respawnTime - (Time.time * 0.01f));
+             yield return new WaitForSeconds(respawnTime - (Time.time * 0.05f));
 
             SpawnEnemy();
         }
