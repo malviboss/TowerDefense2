@@ -41,7 +41,7 @@ public class GolemL : MonoBehaviour
             isAttacking = true;
             
         }
-        if((col.gameObject.name == "Knight1") || (col.gameObject.name == "Knight2")){
+        if((col.gameObject.name.Equals("Knight1")) || (col.gameObject.name.Equals("Knight2"))){
             //quando colpisci il giocatore
             Debug.Log("Hit player");
             //fermati

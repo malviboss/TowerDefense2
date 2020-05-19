@@ -43,6 +43,7 @@
      <Compile Include="Assets\Script\KnightScriptL.cs" />
      <Compile Include="Assets\Script\KnightScriptR.cs" />
      <Compile Include="Assets\Script\Menu.cs" />
+     <Compile Include="Assets\Script\PauseMenu.cs" />
      <Compile Include="Assets\Script\ScoreScript.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />

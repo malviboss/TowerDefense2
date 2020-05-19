@@ -8,19 +8,26 @@ public class KnightScriptR : MonoBehaviour
 
     // Start is called before the first frame update
     Animator player_anim;
-    
+
     AnimatorClipInfo[] m_CurrentClipInfo;
 
     float m_CurrentClipLength;
-    
+  public GameObject heart1R, heart2R, heart3R;
     public bool isAttacking, isDead;
     public float moveSpeed = 0f;
-    public float lives = 3f;
+    public int lives = 3;
     // Start is called before the first frame update
     void Start()
     {
-        player_anim= gameObject.GetComponent<Animator>();
-        m_CurrentClipInfo=player_anim.GetCurrentAnimatorClipInfo(0);
+
+        heart1R = GameObject.Find("heart1R");
+        heart2R = GameObject.Find("heart2R");
+        heart3R = GameObject.Find("heart3R");
+        heart3R.gameObject.SetActive(true);
+        heart2R.gameObject.SetActive(true);
+        heart1R.gameObject.SetActive(true);
+        player_anim = gameObject.GetComponent<Animator>();
+        m_CurrentClipInfo = player_anim.GetCurrentAnimatorClipInfo(0);
         m_CurrentClipLength = m_CurrentClipInfo[0].clip.length;
         Debug.Log(m_CurrentClipInfo);
         Debug.Log(m_CurrentClipLength);
@@ -31,13 +38,20 @@ public class KnightScriptR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //controlla se sono rimaste vite
-        if(lives <= 0){
-            //cambia parametro in animator per attivare animazione di morte
-            isDead =true; //al prossimo frame aggiornerà animazione
-            Debug.Log("Morto");
+        switch (lives)
+        {
+            case 2:
+                heart3R.gameObject.SetActive(false);
+                break;
+            case 1:
+                heart2R.gameObject.SetActive(false);
+                break;
+            case 0:
+                heart1R.gameObject.SetActive(false);         //cambia parametro in animator per attivare animazione di morte
+                isDead = true; //al prossimo frame aggiornerà animazione
+                Debug.Log("Morto");
+                break;
         }
-        
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -45,30 +59,33 @@ public class KnightScriptR : MonoBehaviour
             Debug.Log("Premuto tasto destro mouse");
             isAttacking = true;
 
-        }else{
-            //Debug.Log("Non ho premuto A ma un altro tasto");
-            isAttacking = false; 
         }
-        
+        else
+        {
+            //Debug.Log("Non ho premuto A ma un altro tasto");
+            isAttacking = false;
+        }
+
         //Controlla se sta attaccando o no
         if (isAttacking == false)
             player_anim.SetBool("isAttacking", false);
 
         if (isAttacking == true)
             player_anim.SetBool("isAttacking", true);
-        
-        if (isDead == true){
+
+        if (isDead == true)
+        {
             player_anim.SetBool("isDead", true);
             //distrugge l'oggetto dopo aver aspettato il numero di secondi
             //necessari a mostrare l'animazione
-            Destroy(gameObject,m_CurrentClipLength);
+            Destroy(gameObject, m_CurrentClipLength);
         }
 
         //prove varie di debug
         if (Input.GetKeyDown(KeyCode.G))
         {
-            lives = lives -1;
-            Debug.Log("Vite scese a "+ lives+"");
+            lives = lives - 1;
+            Debug.Log("Vite scese a " + lives + "");
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -77,8 +94,12 @@ public class KnightScriptR : MonoBehaviour
     }
 
 
-    void OnTriggerEnter2D (Collider2D col){
-         ScoreScript.scoreValue +=1;
-         Debug.Log("hit Detection");
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (!col.gameObject.name.Equals("ground"))
+        {
+            ScoreScript.scoreValue += 1;
+            Debug.Log("hit Detection");
+        }
     }
 }
