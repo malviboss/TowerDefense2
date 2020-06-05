@@ -7,17 +7,26 @@ public class ScoreScript : MonoBehaviour
 {
 
     public static int scoreValue = 0;
-    Text score;
+    public Text score;
+    public Text highScore;
     // Start is called before the first frame update
     void Start()
     {
         score = GetComponent<Text> ();
+   
+        highScore.text = "HighScore: " + PlayerPrefs.GetInt("HighScore", 0).ToString();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        score.text = "Score :" + scoreValue;
+        
+        score.text = "Score :" + scoreValue.ToString();
+        if (scoreValue > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayerPrefs.SetInt("HighScore", scoreValue);
+            highScore.text = scoreValue.ToString();
+        }
     }
 }

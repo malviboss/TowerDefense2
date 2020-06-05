@@ -36,15 +36,25 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\MenuPrincipale.cs" />
+     <Compile Include="Assets\Script\BGSound.cs" />
+     <Compile Include="Assets\Script\CharacterChanger.cs" />
      <Compile Include="Assets\Script\EnemySpawnerScript.cs" />
      <Compile Include="Assets\Script\GolemL.cs" />
      <Compile Include="Assets\Script\GolemR.cs" />
      <Compile Include="Assets\Script\KnightScriptL.cs" />
      <Compile Include="Assets\Script\KnightScriptR.cs" />
      <Compile Include="Assets\Script\Menu.cs" />
+     <Compile Include="Assets\Script\MenuPrincipale.cs" />
      <Compile Include="Assets\Script\PauseMenu.cs" />
+     <Compile Include="Assets\Script\RestartGame.cs" />
      <Compile Include="Assets\Script\ScoreScript.cs" />
+     <Compile Include="Assets\Script\Scoreboard.cs" />
+     <Compile Include="Assets\Script\ScoreboardEntryData.cs" />
+     <Compile Include="Assets\Script\ScoreboardEntryUI.cs" />
+     <Compile Include="Assets\Script\ScoreboardSaveData.cs" />
+     <Compile Include="Assets\Script\Selected.cs" />
+     <Compile Include="Assets\Script\SetVolume.cs" />
+     <Compile Include="Assets\Script\TowerScript.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TowerDefense2\background\license.txt" />

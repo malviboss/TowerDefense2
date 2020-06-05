@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SettingsMenu.unity
     guid: 63b8fe82ce682490b8aaff6a76bfdd37
+  - enabled: 1
+    path: Assets/Scenes/ScoreTable.unity
+    guid: c0ae6ac86fb1ada4499df093941e55b4
   m_configObjects: {}
