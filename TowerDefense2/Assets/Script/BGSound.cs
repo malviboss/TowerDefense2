@@ -7,7 +7,20 @@ public class BGSound : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        bgAudio.gameObject.GetComponent<AudioSource>();
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+
+
     }
 
     private static BGSound instance = null;
@@ -15,14 +28,17 @@ public class BGSound : MonoBehaviour
     {
         get { return instance; }
     }
+    public AudioSource bgAudio;
 
     void Awake()
     {
-        if(instance != null && instance != this)
+        bgAudio.gameObject.GetComponent<AudioSource>();
+        if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
             return;
-        } else
+        }
+        else
         {
             instance = this;
         }
@@ -31,6 +47,23 @@ public class BGSound : MonoBehaviour
     }
     void Update()
     {
-        
+        if (TowerScript.isDead)
+        {
+
+            bgAudio.mute = true;
+
+        }
+        else
+        {
+
+            bgAudio.playOnAwake = true;
+            if (PauseMenu.Restart)
+            {
+                bgAudio.mute = false;
+            }
+        }
+
     }
+
+
 }

@@ -4,34 +4,44 @@ using UnityEngine;
 
 public class GolemR : MonoBehaviour
 {
-      AnimatorClipInfo[] m_CurrentClipInfo;
+
+    AnimatorClipInfo[] m_CurrentClipInfo;
     public float moveSpeed = 50f;
-        public bool isAttacking, isDead;
-
+    public bool isAttacking, isDead;
+ public float spriteBlinkingTimer = 0.0f;
+ public float spriteBlinkingMiniDuration = 0.1f;
+ public float spriteBlinkingTotalTimer = 0.0f;
+ public float spriteBlinkingTotalDuration = 0.2f;
     Animator anim;
-
+ public bool startBlinking = false;
     public float m_CurrentClipLength;
+    public AudioSource hitSource;
+        public bool bySuperShot;
 
+SpriteRenderer sr;
 
-
-
-
-
-    // Start is called before the first frame update
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
         m_CurrentClipInfo = anim.GetCurrentAnimatorClipInfo(0);
         m_CurrentClipLength = m_CurrentClipInfo[0].clip.length;
-      //  Debug.Log(m_CurrentClipInfo);
-       // Debug.Log(m_CurrentClipLength);
+ 
         isAttacking = false;
         isDead = false;
+        sr = GetComponent<SpriteRenderer>();
+        hitSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-        void Update()
+
+    void Update()
     {
+        moveSpeed = levelSpeed(ScoreScript.scoreValue);
+
+        if (startBlinking == true)
+        {
+            SpriteBlinkingEffect();
+        }
+
         if (isAttacking == true)
         {
             //cambia parametro del corrispondente Animator
@@ -41,17 +51,17 @@ public class GolemR : MonoBehaviour
         //muoviti(c'è un modo migliore per farlo senza sdoppiare script(?)... ma per ora va bene)
         transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
 
-
-        if (isDead == true)
+        if (isDead)
         {
-             moveSpeed = 0f;
-            anim.SetBool("isDead", true);
-            //distrugge l'oggetto dopo aver aspettato il numero di secondi
-            //necessari a mostrare l'animazione
-            Destroy(gameObject, m_CurrentClipLength);
+             ScoreScript.scoreValue++;
+             if (!bySuperShot)
+             SuperShotScript.fillSupershotBar++;
+            dead();
+            isDead= false;
+
         }
 
-             if (Input.GetKeyDown(KeyCode.A))
+             if (Input.GetKeyDown(KeyCode.B))
         {
             isAttacking = false;
             isDead = true;
@@ -59,41 +69,111 @@ public class GolemR : MonoBehaviour
         }
     }
 
- void OnCollisionEnter2D(Collision2D col)
+    void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.name == "Tower") {
-            Debug.Log ("Hit Tower");
+
+        if (col.gameObject.name == "Tower")
+        {
+           
             //fermati
             moveSpeed = 0f;
             isAttacking = true;
-            
+
         }
-                if ((col.gameObject.name.Equals("Knight1")) || (col.gameObject.name.Equals("Knight2")))
+        if ((col.gameObject.tag.Equals("Player")))
         {
-            //quando colpisci il giocatore
-        //    Debug.Log("Hit player");
-            //fermati
+           
             moveSpeed = 0f;
-            //fai cose per avviare animazione di attacco
+           
             isAttacking = true;
            
-            //quando player muore deve ricominciare a muoversi
-            //settando isAttacking a false
-            if (KnightScriptR.isAttacking != true && isAttacking==true)
-            {
+            
                 
-                KnightScriptR.lives = KnightScriptR.lives - 1; 
-                if (KnightScriptR.lives == 0){
+              //  KnightScriptL.lives = KnightScriptL.lives - 1; 
+                if (KnightScriptR.isDead == true){
                     isAttacking = false;
-                    moveSpeed = 50f;
-                }else {
-                    KnightScriptR.isHurt = true;
+                       moveSpeed = levelSpeed(ScoreScript.scoreValue);
                 }
-            }
+        
             
             
         }
     }
-    
 
+
+    public void dead()
+    {
+        anim.SetBool("isDead", true);
+       
+    
+        startBlinking = true;
+        moveSpeed = 0f;
+        if (!bySuperShot)
+        {
+            hitSource.Play();
+            bySuperShot = false;
+        }
+        hitSource.Play();
+        Destroy(gameObject, 0.3f);
+
+    }
+
+
+
+    private void SpriteBlinkingEffect()
+    {
+        spriteBlinkingTotalTimer += Time.deltaTime;
+        if (spriteBlinkingTotalTimer >= spriteBlinkingTotalDuration)
+        {
+            startBlinking = false;
+            spriteBlinkingTotalTimer = 0.0f;
+            this.gameObject.GetComponent<SpriteRenderer>().enabled = true;   // according to 
+                                                                             //your sprite
+            return;
+        }
+
+        spriteBlinkingTimer += Time.deltaTime;
+        if (spriteBlinkingTimer >= spriteBlinkingMiniDuration)
+        {
+            spriteBlinkingTimer = 0.0f;
+            if (this.gameObject.GetComponent<SpriteRenderer>().enabled == true)
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().enabled = false;  //make changes
+            }
+            else
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().enabled = true;   //make changes
+            }
+        }
+    }
+
+    private float levelSpeed(int val){
+        float speed =0.0f;
+        if (val <5)
+        {
+            //livello 1
+            speed = 70f;
+        } else
+        if (val >= 5 && val < 10)
+        {
+            //livello 1
+            speed = 90f;
+        }
+        else if (val >= 10 && val < 30)
+        {
+            //livello 2
+            speed = 110f;
+        }
+        else if (val >= 30 && val < 60)
+        {
+            //livello 3
+             speed = 130f;
+        }
+        else
+        {
+            speed = 200f;
+            //livello finale
+        }
+        return speed;
+    }
 }

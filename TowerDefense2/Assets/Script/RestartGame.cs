@@ -22,13 +22,6 @@ public class RestartGame : MonoBehaviour
 
     public void restartScene()
     {
-        gameOverText.SetActive(false);
-        restartButton.SetActive(false);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Menu");
-
-
-
 
     }
 }

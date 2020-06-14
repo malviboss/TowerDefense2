@@ -1,5 +1,31 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!61 &-1622457574739273857
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5306792771421438587}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.48138162, y: 0.518407}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.54, y: 2.05}
+    newSize: {x: 2.54, y: 2.05}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.8736953, y: 0.23557758}
+  m_EdgeRadius: 0
 --- !u!114 &7829822688745850431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13,6 +39,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 50
+  isAttacking: 0
+  isDead: 0
+  spriteBlinkingTimer: 0
+  spriteBlinkingMiniDuration: 0.1
+  spriteBlinkingTotalTimer: 0
+  spriteBlinkingTotalDuration: 0.2
+  startBlinking: 0
+  m_CurrentClipLength: 0
+  hitSource: {fileID: 0}
+  bySuperShot: 0
 --- !u!1001 &4166215373524012321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28,22 +64,32 @@ PrefabInstance:
     - target: {fileID: 8103344792098049878, guid: 63daf4d4c47564fee962b18ad9259e57,
         type: 3}
       propertyPath: m_Offset.x
-      value: 0.46411324
+      value: 0.47337097
       objectReference: {fileID: 0}
     - target: {fileID: 8103344792098049878, guid: 63daf4d4c47564fee962b18ad9259e57,
         type: 3}
       propertyPath: m_Size.x
-      value: 0.98013115
+      value: 0.9616157
       objectReference: {fileID: 0}
     - target: {fileID: 8103344792098049878, guid: 63daf4d4c47564fee962b18ad9259e57,
         type: 3}
       propertyPath: m_UsedByComposite
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8103344792098049878, guid: 63daf4d4c47564fee962b18ad9259e57,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: -0.20876896
+      objectReference: {fileID: 0}
+    - target: {fileID: 8103344792098049878, guid: 63daf4d4c47564fee962b18ad9259e57,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 1.4000719
+      objectReference: {fileID: 0}
     - target: {fileID: 8103344792098049879, guid: 63daf4d4c47564fee962b18ad9259e57,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 930
+      value: 970
       objectReference: {fileID: 0}
     - target: {fileID: 8103344792098049879, guid: 63daf4d4c47564fee962b18ad9259e57,
         type: 3}

@@ -8,6 +8,15 @@ public class PauseMenu : MonoBehaviour
     public static bool GameIsPaused = false;
 
     public GameObject PauseMenuUI;
+    public GameObject GameOverUI, tower;
+
+
+    public static bool GameIsOver = false, Restart;
+     public AudioSource pauseAudio;
+    
+    void Start(){
+        Restart = false;
+    }
 
     void Update()
     {
@@ -16,10 +25,18 @@ public class PauseMenu : MonoBehaviour
             if (GameIsPaused)
             {
                 Resume();
-            } else
+            }
+            else if (!GameIsOver)
             {
                 Pause();
             }
+        }
+
+        if (TowerScript.lives <= 0)
+        {
+           // GameOver();
+            Time.timeScale = 0f;
+            GameOverUI.SetActive(true);
         }
     }
 
@@ -33,14 +50,19 @@ public class PauseMenu : MonoBehaviour
     void Pause()
     {
         PauseMenuUI.SetActive(true);
+        pauseAudio.Play();
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
 
     public void LoadMenu()
     {
-        Time.timeScale = 1f;
+        tower = GameObject.Find("Tower");
+        GameOverUI.SetActive(false);
+        TowerScript.isDead = false;
         SceneManager.LoadScene("Menu");
+        Restart = true;
+        
     }
 
     public void QuitGame()
@@ -49,4 +71,13 @@ public class PauseMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
+
+       void GameOver()
+    {
+
+      //  GameIsOver = true;
+        
+    }
+
+
 }

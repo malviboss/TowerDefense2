@@ -6,13 +6,12 @@ public class KnightScriptR : MonoBehaviour
 {
 
 
-    // Start is called before the first frame update
     Animator player_anim;
 
     AnimatorClipInfo[] m_CurrentClipInfo;
     Rigidbody2D rb;
-    SpriteRenderer spriteRenderer;
-    public Selected sel;
+public AudioSource jumpSource, hitSource, deadSource;
+    Selected sel;
     float m_CurrentClipLength;
     bool isGrounded;
     public static bool isAttacking, isDead,  isActive, isJumping, isHurt;
@@ -20,25 +19,31 @@ public class KnightScriptR : MonoBehaviour
     public Transform isGroundedChecker;
     public float checkGroundRadius;
     public LayerMask groundLayer;
-    public float moveSpeed = 0f;
-    public GameObject heart1R, heart2R, heart3R;
-    public static int lives = 3;
+    public float moveSpeed;
+    public GameObject heart1R, heart2R, heart3R, bar;
+    public int lives = 3;
     public float jump;
     int playerLayer, enemyLayer;
-   // bool coroutineAllowed = true;
+    float lowJumpMultiplier = 40;
+    float fallMultiplier = 100f;
+  
     Color color;
+     SpriteRenderer sr, sh1, sh2, sh3;
     Renderer rend;
-    // Start is called before the first frame update
+
     void Start()
     {
         heart1R = GameObject.Find("heart1R");
         heart2R = GameObject.Find("heart2R");
         heart3R = GameObject.Find("heart3R");
+        bar = GameObject.Find("activeR");
         heart1R.gameObject.SetActive(true);
         heart2R.gameObject.SetActive(true);
         heart3R.gameObject.SetActive(true);
+        bar.gameObject.SetActive(true);
 
-
+        sr = GetComponent<SpriteRenderer>();
+        isGrounded = true;
         sel = gameObject.GetComponent<Selected>();
         player_anim = gameObject.GetComponent<Animator>();
         m_CurrentClipInfo = player_anim.GetCurrentAnimatorClipInfo(0);
@@ -48,30 +53,58 @@ public class KnightScriptR : MonoBehaviour
         isAttacking = false;
         isDead = false;
         isMoving = false;
-         isGrounded = true;
+        isJumping = false;
+        isHurt = false;
         rb = gameObject.GetComponent<Rigidbody2D>();
-        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
+        sh1 = heart1R.gameObject.GetComponent<SpriteRenderer>();
+        sh2 = heart2R.gameObject.GetComponent<SpriteRenderer>();
+        sh3 = heart3R.gameObject.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch (lives)
+      switch (lives)
         {
             case 2:
                 heart3R.gameObject.SetActive(false);
-               
+                if (isActive)
+                {
+                    sr.color = Color.Lerp(sr.color, Color.white, Time.deltaTime / 0.3f);//slowly linear interpolate. takes about 3 seconds to return to white
+
+                }
+                else
+                {
+                    sr.color = Color.Lerp(sr.color, Color.gray, Time.deltaTime / 0.3f);//slowly linear interpolate. takes about 3 seconds to return to white
+
+                }
+
+                isHurt = false;
                 break;
             case 1:
                 heart2R.gameObject.SetActive(false);
-              
+                if (isActive)
+                {
+                    sr.color = Color.Lerp(sr.color, Color.white, Time.deltaTime / 0.3f);//slowly linear interpolate. takes about 3 seconds to return to white
+
+                }
+                else
+                {
+                    sr.color = Color.Lerp(sr.color, Color.gray, Time.deltaTime / 0.3f);//slowly linear interpolate. takes about 3 seconds to return to white
+
+                }
+                isHurt = false;
                 break;
             case 0:
-                heart1R.gameObject.SetActive(false);         //cambia parametro in animator per attivare animazione di morte
+                heart1R.gameObject.SetActive(false);
+                isHurt = false;    //cambia parametro in animator per attivare animazione di morte
                 isDead = true; //al prossimo frame aggiornerà animazione
+
                 Debug.Log("Morto");
                 sel.isDead = true;
-                break;
+
+                break;    
         }
         isActive = sel.isActive;
         //queste azioni avvengono solo se isActive= true
@@ -80,14 +113,16 @@ public class KnightScriptR : MonoBehaviour
             //controllo cambio giocatore
 
             //solo per testare
-            GetComponent<Renderer>().material.color = Color.red;
+            GetComponent<Renderer>().material.color = Color.white;
+            sh1.material.color = Color.white;
+            sh2.material.color = Color.white;
+            sh3.material.color = Color.white;
+            bar.gameObject.SetActive(true);
             //movimento
             Move();
             //salto;
-            CheckIfGrounded();
-            Jump();
-            //attacco
-            Attack();
+            JumpPolish(fallMultiplier, lowJumpMultiplier);
+            Jump(280);
             //Controlla se si sta muovendo o no
             if (isMoving == true)
                 player_anim.SetBool("isMoving", true);
@@ -99,181 +134,169 @@ public class KnightScriptR : MonoBehaviour
                 player_anim.SetBool("isAttacking", true);
             else
                 player_anim.SetBool("isAttacking", false);
+            if (isJumping == true)
+                player_anim.SetBool("isJumping", true);
+            else
+                player_anim.SetBool("isJumping", false);
         }
         else
         {
-            //solo per testare, si può mettere che scompare un indicatore
-            //fare cose
-            //solo per testare se si esegue
-            //si esegue quindi isActive si mette a false
-            GetComponent<Renderer>().material.color = Color.blue;
-            moveSpeed = 0f;
-            jump = 0f;
+
+            GetComponent<Renderer>().material.color = Color.grey;
+            sh1.material.color = Color.grey;
+            sh2.material.color = Color.grey;
+            sh3.material.color = Color.grey;
+            bar.gameObject.SetActive(false);
+            JumpPolish(fallMultiplier, lowJumpMultiplier);
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            player_anim.SetBool("isMoving", false);
+            player_anim.SetBool("isJumping", false);
+            
+            isMoving = false;
 
         }
 
         if (isDead == true)
         {
+            isHurt = false;
+           
             sel.isActive = false;
             player_anim.SetBool("isDead", true);
-            //distrugge l'oggetto dopo aver aspettato il numero di secondi
-            //necessari a mostrare l'animazione
+ 
             Destroy(gameObject, m_CurrentClipLength);
+             
         }
-        if (isHurt){
-            player_anim.SetBool("isHurt", true);
-            isHurt = false;
-        } else {
-            player_anim.SetBool("isHurt", false);
-        }
+
+
         //prove varie di debug
         if (Input.GetKeyDown(KeyCode.P))
         {
-            lives = lives - 1;
-
+            lives=lives-1;
+            Debug.Log("LIVES " + lives);
+            if (lives != 0)
+                hitSource.Play();
+            else
+                deadSource.Play();
+            
+            sr.color = new Color(2,0,0);//set this object's red color to 200 percent
             Debug.Log("Vite scese a " + lives + "");
         }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            GetComponent<Renderer>().material.color = Color.blue;
-        }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            ScoreScript.scoreValue++;
-        }
+
     }
 
     void Move()
     {
-        moveSpeed = 40f;
-        //pone x pari al valore dell'asse orizzontale
-        //non premo nulla, x sarà 0 e non mi muovo
-        //premo D o freccia destra, x sarà 1 e mi muovo lungo l'asse x a destra
-        //premo A o freccia sinistra, x sarà -1 e mi muovo lungo l'asse x a sinistra
+        moveSpeed = 80f;
+
         float x = Input.GetAxisRaw("Horizontal");
         float move = x * moveSpeed;
-        //muovi a destra o sinistra a seconda dell'input preso
         rb.velocity = new Vector2(move, rb.velocity.y);
-        //fai cose varie per mostrare animazioni di camminata
-        //e girare lo sprite
+
         if ((x != 0))
         {
             isMoving = true;
             if (x < 0)
             {
                 //se maggiore di 0 mi sto muovendo verso destra e devo girare lo sprite
-                spriteRenderer.flipX = false;
+                sr.flipX = false;
             }
             else
             {
                 //mi sto muovendo verso sinistra
-                spriteRenderer.flipX = true;
+                sr.flipX = true;
             }
         }
         else
         {
             isMoving = false;
+             rb.velocity = new Vector2(0, rb.velocity.y);
         }
     }
 
-
-
-void Jump() {
- if(Input.GetKeyDown(KeyCode.Space) && isGrounded){
- jump = 70f;
- rb.velocity = new Vector2(rb.velocity.x,jump);
- //metto isGrounded a false così non posso saltare
- //mentre è in aria
- isGrounded = false;
- }
- //funzionare funziona, ma da rifinire...
- }
-
-    void CheckIfGrounded()
+    void JumpPolish(float fallMult, float lowJump)
     {
-       
-        Collider2D collider = Physics2D.OverlapCircle(isGroundedChecker.position, checkGroundRadius, groundLayer);
-
-        if (collider != null)
+        if (rb.velocity.y < 0)
         {
-            isGrounded = true;
+            //se ho velocità y negativa vuol dire mi trovo nella fase di discesa del salto
+            rb.velocity += Vector2.up * Physics2D.gravity * (fallMultiplier - 1) * Time.deltaTime;
         }
-        else
+        else if (rb.velocity.y > 0 && !Input.GetKeyDown(KeyCode.Space))
         {
+            //mi trovo nella fase di salita del salto
+            rb.velocity += Vector2.up * Physics2D.gravity * (lowJumpMultiplier - 1) * Time.deltaTime;
+           
+        }
+    }
+    void Jump(int jumpVelocity)
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            jumpSource.Play();
+            Debug.Log("ENTRA IN SALTO");
+            jump = jumpVelocity;
+            rb.velocity = new Vector2(rb.velocity.x, jump);
+
             isGrounded = false;
+            isJumping = true;
         }
+       
     }
-
-    void Attack()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            //attacca
-            Debug.Log("Premuto tasto mouse sinistro");
-            isAttacking = true;
-
-        }
-        else
-        {
-            if (Time.time > m_CurrentClipLength)
-                //Debug.Log("Non ho premuto A ma un altro tasto");
-                isAttacking = false;
-        }
-    }
-
-   void OnTriggerEnter2D(Collider2D col)
-    {
-
-        // if (!col.gameObject.name.Equals("ground") && !col.gameObject.name.Equals("Knight2") && !col.gameObject.name.Equals("Tower"))
-        if (col.gameObject.name.Equals("GolemL(Clone)") || col.gameObject.name.Equals("GolemR(Clone)"))
-        {
-            Debug.Log(col.gameObject.name);
-            //ScoreScript.scoreValue += 1;
-            Debug.Log("hit Detection GOLEM L ");
-            if (isAttacking == true)
-                Debug.Log("IS ATTACKING?!");
-            if (col.gameObject.name.Equals("GolemL(Clone)"))
-            {
-                Debug.Log ("MORTO GOLEM L");
-                Destroy(col.gameObject, 2f);
-                
-                ScoreScript.scoreValue++;
-            }
-            else if (col.gameObject.name.Equals("GolemR(Clone)"))
-            {
-                Debug.Log ("MORTO GOLEM R");
-                Destroy(col.gameObject, 2f);
-                ScoreScript.scoreValue++;
-            }
-        }
-    }
-
 
 
     void OnCollisionEnter2D(Collision2D col)
     {
-                 if(col.gameObject.name == "ground"){
- //ho toccato il terreno, posso saltare di nuovo
- isGrounded = true;
- }
+        if ((col.gameObject.name == "ground") || (col.gameObject.name == "Tower"))
+        {
+            //ho toccato il terreno, posso saltare di nuovo
+            isGrounded = true;
+            isJumping = false;
+        }
 
-        /*  if (col.gameObject.name == "Tower")
+        if (col.gameObject.tag == "Enemy")
+        {
+            if (isGrounded) 
+            {
+                sr.color = new Color(2, 0, 0);//set this object's red color to 200 percent
+                lives = lives - 1;
+                if (lives != 0)
+                    hitSource.Play();
+                else
+                    deadSource.Play();
+            }
+            else
+            {
+
+                    JumpPolish(10, 10);
+
+                    jump = 200;
+                    rb.velocity = new Vector2(rb.velocity.x, jump);              
+                    isGrounded = false;
+                    isJumping = true;
+                  
+                    if (col.gameObject.name.Equals("GolemL(Clone)"))
+                    {
+                        col.gameObject.GetComponent<GolemL>().isDead = true;
+                    }
+                    else
+                    {
+                        col.gameObject.GetComponent<GolemR>().isDead = true;
+                    }
+                
+            }
+        }
+     //   }
+
+
+        if (col.gameObject.name == "Tower")
           {
               Debug.Log("Hit Tower");
               //fermati
+              isMoving=false;
               moveSpeed = 0f;
 
           }
 
-          if (col.gameObject.name == "GolemL")
-          {
-              Debug.Log("Hit GolemL");
-              //fermati
-              moveSpeed = 0f;
-              isAttacking = true;
-
-          }*/
 
     }
 

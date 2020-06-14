@@ -55,9 +55,9 @@ namespace Fabio.Scoreboards
                     savedScores.highscores.Count - maxScoreboardEntries);
             }
 
-            UpdateUI(savedScores);
+         //   UpdateUI(savedScores);
 
-            SaveScores(savedScores);
+            this.SaveScores(savedScores);
         }
 
         private void UpdateUI(ScoreboardSaveData savedScores)
@@ -74,11 +74,13 @@ namespace Fabio.Scoreboards
             }
         }
 
-        private ScoreboardSaveData GetSavedScores()
+        public ScoreboardSaveData GetSavedScores()
         {
             if (!File.Exists(SavePath))
             {
                 File.Create(SavePath).Dispose();
+                string jsonp = "{\"highscores\": []}";
+                System.IO.File.WriteAllText(SavePath, jsonp);
                 return new ScoreboardSaveData();
             }
 
@@ -89,7 +91,7 @@ namespace Fabio.Scoreboards
             }
         }
 
-        private void SaveScores(ScoreboardSaveData scoreboardSaveData)
+        public void SaveScores(ScoreboardSaveData scoreboardSaveData)
         {
             using(StreamWriter stream = new StreamWriter(SavePath))
             {

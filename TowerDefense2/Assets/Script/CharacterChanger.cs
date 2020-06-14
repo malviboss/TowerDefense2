@@ -26,14 +26,7 @@ public class CharacterChanger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //si può cambiare logica di come si cambia personaggio...
-        /*if(Input.GetKeyDown(KeyCode.C)) {
-            ChangeCharacter(0);
-        }
-        if(Input.GetKeyDown(KeyCode.V)) {
-            ChangeCharacter(1);
-        }*/
-
+      
         //ad ogni update mi basta controllare se una delle due isDead in Selected è stato
         //spuntato e agire di conseguenza
         isDead1 = selectedComponents[0].isDead;
@@ -55,15 +48,7 @@ public class CharacterChanger : MonoBehaviour
 
     void ChangeCharacter(int index)
     {
-        /*
-        for(int i=0; i < selectedComponents.Length; i++) {
-            if (i == index){
-                selectedComponents[i].isActive = true;
-            }else{
-                selectedComponents[i].isActive = false;
-            }
-
-        }*/
+        
         if(index == 0){
             selectedComponents[0].isActive = true;
             selectedComponents[1].isActive = false;
@@ -72,12 +57,10 @@ public class CharacterChanger : MonoBehaviour
             selectedComponents[1].isActive = true;
         }else{
             
-            //prendo valori correnti di isActive di entrambi
-            //funziona ma un po' a scatti, per ora resta così e ci teniamo entrambi...
+           
             player1 = selectedComponents[0].isActive;
-            Debug.Log("L - ACTIVE -> " + player1);
             player2 = selectedComponents[1].isActive;
-            Debug.Log("R - ACTIVE -> " + player2);
+
             if(player1){
                 //se è attivo il player1 cambio
                 selectedComponents[0].isActive = false;

@@ -9,16 +9,15 @@ public class ScoreScript : MonoBehaviour
     public static int scoreValue = 0;
     public Text score;
     public Text highScore;
-    // Start is called before the first frame update
+
     void Start()
     {
         score = GetComponent<Text> ();
    
-        highScore.text = "HighScore: " + PlayerPrefs.GetInt("HighScore", 0).ToString();
+
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -28,5 +27,19 @@ public class ScoreScript : MonoBehaviour
             PlayerPrefs.SetInt("HighScore", scoreValue);
             highScore.text = scoreValue.ToString();
         }
+
+
+            if (Input.GetKeyDown(KeyCode.Y))
+        {
+            scoreValue++;
+            
+            SuperShotScript.fillSupershotBar++;
+
+        }
+    }
+
+    public int getNumber()
+    {
+        return scoreValue;
     }
 }
